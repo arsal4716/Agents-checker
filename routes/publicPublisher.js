@@ -81,4 +81,14 @@ router.get("/download", async (req, res) => {
   }
 });
 
+// POST /api/public/publisher/refresh — public manual refresh
+router.post("/refresh", async (req, res) => {
+  try {
+    const snapshot = await fetchAndSave("publisher");
+    return res.json({ data: snapshot });
+  } catch (err) {
+    console.error("Public publisher refresh error:", err.message);
+    return res.status(500).json({ error: "Failed to refresh publisher data." });
+  }
+});
 module.exports = router;

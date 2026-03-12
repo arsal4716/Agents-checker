@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { getPublisherLatest, getPublisherRecent, getPublisherHourly, getPublisherDownloadUrl } from "../api/client.js";
+import { getPublisherLatest, getPublisherRecent, getPublisherHourly, getPublisherDownloadUrl, refreshPublisher } from "../api/client.js";
 import SummaryCards from "../components/SummaryCards.jsx";
 import RecentChecksTable from "../components/RecentChecksTable.jsx";
 import HourlyAveragesTable from "../components/HourlyAveragesTable.jsx";
@@ -74,9 +74,16 @@ export default function PublisherPage() {
   const [loadingSnapshot, setLoadingSnapshot] = useState(true);
   const [loadingRecent, setLoadingRecent] = useState(true);
   const [loadingHourly, setLoadingHourly] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [toast, setToast] = useState(null);
   const [autoRefreshSecs, setAutoRefreshSecs] = useState(AUTO_REFRESH);
   const timerRef = useRef(null);
   const countdownRef = useRef(null);
+
+  const showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const loadAll = useCallback(async (silent = false) => {
     if (!silent) { setLoadingSnapshot(true); setLoadingRecent(true); }
@@ -126,6 +133,26 @@ export default function PublisherPage() {
     return () => { clearInterval(timerRef.current); clearInterval(countdownRef.current); };
   }, [hourlyDays]);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await refreshPublisher();
+      setSnapshot(res.data);
+      const [recentRes, hourlyRes] = await Promise.all([
+        getPublisherRecent(20),
+        getPublisherHourly(hourlyDays),
+      ]);
+      setRecentChecks(recentRes.data || []);
+      setHourlyAverages(hourlyRes.data || []);
+      setAutoRefreshSecs(AUTO_REFRESH);
+      showToast("Data refreshed from CRM.");
+    } catch {
+      showToast("Refresh failed. Try again.", "error");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const checkedAt = snapshot?.checkedAt
     ? new Date(snapshot.checkedAt).toLocaleString()
     : null;
@@ -146,11 +173,32 @@ export default function PublisherPage() {
               <span className="hidden sm:inline text-gray-600 text-xs ml-3">Combined Agent Availability</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse2 inline-block" />
               <span className="font-display">Refreshes in {autoRefreshSecs}s</span>
             </div>
+            {/* Refresh Now button */}
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary py-1.5 px-3 text-xs flex items-center gap-1.5"
+            >
+              {refreshing ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-surface/40 border-t-surface rounded-full animate-spin" />
+                  Refreshing...
+                </>
+              ) : (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  Refresh Now
+                </>
+              )}
+            </button>
             <a
               href={getPublisherDownloadUrl()}
               target="_blank"
@@ -168,7 +216,6 @@ export default function PublisherPage() {
       </header>
 
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6 animate-fade-in">
-        {/* Title */}
         <div>
           <h1 className="text-xl font-bold text-white">Publisher Combined View</h1>
           <p className="text-sm text-gray-500 mt-0.5">
@@ -177,13 +224,9 @@ export default function PublisherPage() {
           </p>
         </div>
 
-        {/* Summary cards */}
         <SummaryCards snapshot={snapshot} loading={loadingSnapshot} systemType="publisher" />
-
-        {/* Breakdown table */}
         <PublisherBreakdownTable entries={snapshot?.entries || []} loading={loadingSnapshot} />
 
-        {/* History + Hourly */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <RecentChecksTable checks={recentChecks} loading={loadingRecent} />
           <HourlyAveragesTable
@@ -198,6 +241,17 @@ export default function PublisherPage() {
       <footer className="border-t border-surface-border py-4 text-center text-xs text-gray-600 font-display">
         HLG Solutions · CRM Agent Monitor · Publisher View
       </footer>
+
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed bottom-6 right-6 px-4 py-3 rounded-xl text-sm font-medium shadow-xl animate-slide-up
+          ${toast.type === "error"
+            ? "bg-red-500/20 border border-red-500/30 text-red-300"
+            : "bg-accent-green/20 border border-accent-green/30 text-accent-green"
+          }`}>
+          {toast.msg}
+        </div>
+      )}
     </div>
   );
 }
