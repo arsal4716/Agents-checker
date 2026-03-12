@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-surface text-white font-body antialiased;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,229,160,0.04) 0%, transparent 100%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(59,130,246,0.03) 0%, transparent 100%);
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d0f14;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e2330;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00e5a0;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-raised border border-surface-border rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-accent-green text-surface font-semibold px-4 py-2 rounded-lg
+           hover:bg-accent-greenDim transition-all duration-200 text-sm
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-border text-gray-300 font-medium px-4 py-2 rounded-lg
+           hover:bg-surface-hover hover:text-white transition-all duration-200 text-sm
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-danger {
+    @apply bg-transparent border border-accent-red text-accent-red font-medium px-4 py-2 rounded-lg
+           hover:bg-accent-red hover:text-white transition-all duration-200 text-sm;
+  }
+
+  .btn-excel {
+    @apply bg-transparent border border-accent-blue text-accent-blue font-medium px-4 py-2 rounded-lg
+           hover:bg-accent-blue hover:text-white transition-all duration-200 text-sm;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full inline-block;
+  }
+}
