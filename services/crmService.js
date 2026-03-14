@@ -6,16 +6,6 @@ const HC_BASE = "https://hcs.tldcrm.com/api/public/dialer/ready/";
 const LM_BASE = "https://lm360.tldcrm.com/api/public/dialer/ready";
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
-function normalizeState(state) {
-  return String(state || "").trim().toUpperCase();
-}
-
-function applyStateFilter(entries, stateFilter) {
-  if (!stateFilter) return entries;
-  const target = normalizeState(stateFilter);
-  return entries.filter((e) => normalizeState(e.state) === target);
-}
-
 // ─── Individual fetch helpers ─────────────────────────────────────────────────
 
 async function fetchHC(entry) {
@@ -23,26 +13,13 @@ async function fetchHC(entry) {
     const res = await axios.get(
       `${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
     );
-
     return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: Number(res.data.ready || 0),
-      active: Number(res.data.active || 0),
-      reason: res.data.reason || "",
-      cause: res.data.cause || "",
-      hasError: false,
+      state: entry.state, phone: entry.phone,
+      ready: Number(res.data.ready || 0), active: Number(res.data.active || 0),
+      reason: res.data.reason || "", cause: res.data.cause || "", hasError: false,
     };
   } catch {
-    return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "",
-      cause: "",
-      hasError: true,
-    };
+    return { state: entry.state, phone: entry.phone, ready: "ERR", active: "ERR", reason: "", cause: "", hasError: true };
   }
 }
 
@@ -51,26 +28,13 @@ async function fetchLM(entry) {
     const res = await axios.get(
       `${LM_BASE}/${entry.phone}?ava=1&ing=SRI_&sta=true&adg=true&cnt=true&act=true&rsn=true`
     );
-
     return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: Number(res.data.ready || 0),
-      active: Number(res.data.active || 0),
-      reason: res.data.reason || "",
-      cause: res.data.cause || "",
-      hasError: false,
+      state: entry.state, phone: entry.phone,
+      ready: Number(res.data.ready || 0), active: Number(res.data.active || 0),
+      reason: res.data.reason || "", cause: res.data.cause || "", hasError: false,
     };
   } catch {
-    return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "ERR",
-      cause: "ERR",
-      hasError: true,
-    };
+    return { state: entry.state, phone: entry.phone, ready: "ERR", active: "ERR", reason: "ERR", cause: "ERR", hasError: true };
   }
 }
 
@@ -79,139 +43,29 @@ async function fetchPros(entry) {
     const res = await axios.get(
       `${PROS_BASE}/${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
     );
-
     return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: Number(res.data.ready || 0),
-      active: Number(res.data.active || 0),
-      reason: res.data.reason || "",
-      cause: res.data.cause || "",
-      hasError: false,
+      state: entry.state, phone: entry.phone,
+      ready: Number(res.data.ready || 0), active: Number(res.data.active || 0),
+      reason: res.data.reason || "", cause: res.data.cause || "", hasError: false,
     };
   } catch {
-    return {
-      state: normalizeState(entry.state),
-      phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "",
-      cause: "",
-      hasError: true,
-    };
+    return { state: entry.state, phone: entry.phone, ready: "ERR", active: "ERR", reason: "", cause: "", hasError: true };
   }
 }
 
-// ─── Publisher combined fetch ─────────────────────────────────────────────────
+// ─── Key insight: use TX entry as the true unique agent count ─────────────────
+// One agent appears in every state queue they're licensed in.
+// Since EVERY agent has TX, the TX queue count = actual unique agent headcount.
+// Summing across states would multiply-count the same agents.
 
-async function fetchPublisher(stateFilter) {
-  const hcPromises = hcNumbers.map(async (entry) => {
-    try {
-      const res = await axios.get(
-        `${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
-      );
-      return {
-        state: normalizeState(entry.state),
-        ready: Number(res.data.ready || 0),
-        active: Number(res.data.active || 0),
-      };
-    } catch {
-      return {
-        state: normalizeState(entry.state),
-        ready: 0,
-        active: 0,
-      };
-    }
-  });
-
-  const lmPromises = lmNumbers.map(async (entry) => {
-    try {
-      const res = await axios.get(
-        `${LM_BASE}/${entry.phone}?ava=1&ing=SRI_&sta=true&adg=true&cnt=true&act=true&rsn=true`
-      );
-      return {
-        state: normalizeState(entry.state),
-        ready: Number(res.data.ready || 0),
-        active: Number(res.data.active || 0),
-      };
-    } catch {
-      return {
-        state: normalizeState(entry.state),
-        ready: 0,
-        active: 0,
-      };
-    }
-  });
-
-  const prosPromises = prosNumbers.map(async (entry) => {
-    try {
-      const res = await axios.get(
-        `${PROS_BASE}/${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
-      );
-
-      return {
-        state: normalizeState(entry.state),
-        ready: Number(res.data.ready || 0),
-        active: Number(res.data.active || 0),
-      };
-    } catch {
-      return {
-        state: normalizeState(entry.state),
-        ready: 0,
-        active: 0,
-      };
-    }
-  });
-
-  const [hcData, lmData, prosData] = await Promise.all([
-    Promise.all(hcPromises),
-    Promise.all(lmPromises),
-    Promise.all(prosPromises),
-  ]);
-
-  const combined = {};
-
-  [...hcData, ...lmData, ...prosData].forEach((row) => {
-    if (!combined[row.state]) {
-      combined[row.state] = {
-        state: row.state,
-        phone: "",
-        ready: 0,
-        active: 0,
-        reason: "",
-        cause: "",
-        hasError: false,
-      };
-    }
-
-    combined[row.state].ready += Number(row.ready || 0);
-    combined[row.state].active += Number(row.active || 0);
-  });
-
-  let entries = Object.values(combined);
-
-  entries = applyStateFilter(entries, stateFilter);
-  entries.sort((a, b) => b.active - a.active);
-
-  const totalReady = entries.reduce((sum, e) => sum + Number(e.ready || 0), 0);
-  const totalActive = entries.reduce((sum, e) => sum + Number(e.active || 0), 0);
-
-  return {
-    systemType: "publisher",
-    entries,
-    totalReady,
-    totalActive,
-    meta: {
-      successCount: entries.length,
-      errorCount: 0,
-      stateFilter: stateFilter ? normalizeState(stateFilter) : null,
-    },
-  };
+function getTxCount(entries) {
+  const tx = entries.find((e) => e.state === "TX" && !e.hasError);
+  return tx ? { ready: Number(tx.ready || 0), active: Number(tx.active || 0) } : { ready: 0, active: 0 };
 }
 
 // ─── System fetch ─────────────────────────────────────────────────────────────
 
-async function fetchSystem(systemType, stateFilter) {
+async function fetchSystem(systemType) {
   let entries = [];
 
   if (systemType === "hc") {
@@ -221,41 +75,82 @@ async function fetchSystem(systemType, stateFilter) {
   } else if (systemType === "pros") {
     entries = await Promise.all(prosNumbers.map(fetchPros));
   } else if (systemType === "publisher") {
-    return fetchPublisher(stateFilter);
+    return fetchPublisher();
   }
 
   const valid = entries.filter((e) => !e.hasError);
   const errors = entries.filter((e) => e.hasError);
 
-  const filteredEntries = applyStateFilter(entries, stateFilter);
-  const filteredValid = filteredEntries.filter((e) => !e.hasError);
-  const filteredErrors = filteredEntries.filter((e) => e.hasError);
+  // Use TX count as canonical agent headcount — NOT a sum across states
+  const { ready: totalReady, active: totalActive } = getTxCount(entries);
 
-  const totalReady = filteredValid.reduce((sum, e) => sum + (Number(e.ready) || 0), 0);
-  const totalActive = filteredValid.reduce((sum, e) => sum + (Number(e.active) || 0), 0);
-
-  filteredEntries.sort((a, b) => Number(b.active || 0) - Number(a.active || 0));
+  // Sort by active desc for display
+  entries.sort((a, b) => Number(b.active || 0) - Number(a.active || 0));
 
   return {
-    systemType,
-    entries: filteredEntries,
-    totalReady,
-    totalActive,
-    meta: {
-      successCount: filteredValid.length,
-      errorCount: filteredErrors.length,
-      sourceSuccessCount: valid.length,
-      sourceErrorCount: errors.length,
-      stateFilter: stateFilter ? normalizeState(stateFilter) : null,
-    },
+    systemType, entries, totalReady, totalActive,
+    meta: { successCount: valid.length, errorCount: errors.length },
+  };
+}
+
+// ─── Publisher combined fetch ─────────────────────────────────────────────────
+
+async function fetchPublisher() {
+  const hcPromises = hcNumbers.map(async (entry) => {
+    try {
+      const res = await axios.get(`${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`);
+      return { state: entry.state, ready: Number(res.data.ready || 0), active: Number(res.data.active || 0), hasError: false };
+    } catch { return { state: entry.state, ready: 0, active: 0, hasError: true }; }
+  });
+
+  const lmPromises = lmNumbers.map(async (entry) => {
+    try {
+      const res = await axios.get(`${LM_BASE}/${entry.phone}?ava=1&ing=SRI_&sta=true&adg=true&cnt=true&act=true&rsn=true`);
+      return { state: entry.state, ready: Number(res.data.ready || 0), active: Number(res.data.active || 0), hasError: false };
+    } catch { return { state: entry.state, ready: 0, active: 0, hasError: true }; }
+  });
+
+  const prosPromises = prosNumbers.map(async (entry) => {
+    try {
+      const res = await axios.get(`${PROS_BASE}/${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`);
+      return { state: entry.state, ready: Number(res.data.ready || 0), active: Number(res.data.active || 0), hasError: false };
+    } catch { return { state: entry.state, ready: 0, active: 0, hasError: true }; }
+  });
+
+  const [hcData, lmData, prosData] = await Promise.all([
+    Promise.all(hcPromises),
+    Promise.all(lmPromises),
+    Promise.all(prosPromises),
+  ]);
+
+  // Aggregate per-state display data (used for the breakdown table only)
+  const combined = {};
+  [...hcData, ...lmData, ...prosData].forEach((row) => {
+    if (!combined[row.state]) combined[row.state] = { state: row.state, phone: "", ready: 0, active: 0, reason: "", cause: "", hasError: false };
+    combined[row.state].ready += row.ready;
+    combined[row.state].active += row.active;
+  });
+  const entries = Object.values(combined).sort((a, b) => b.active - a.active);
+
+  // True agent count per system = TX entry for each system (every agent has TX)
+  // Then sum across systems because HC/LM/PROS agents are different people
+  const hcTx = getTxCount(hcData);
+  const lmTx = getTxCount(lmData);
+  const prosTx = getTxCount(prosData);
+
+  const totalReady  = hcTx.ready  + lmTx.ready  + prosTx.ready;
+  const totalActive = hcTx.active + lmTx.active + prosTx.active;
+
+  return {
+    systemType: "publisher", entries, totalReady, totalActive,
+    meta: { successCount: entries.length, errorCount: 0 },
   };
 }
 
 // ─── Save snapshot to MongoDB ─────────────────────────────────────────────────
 
-async function fetchAndSave(systemType, stateFilter) {
-  const data = await fetchSystem(systemType, stateFilter);
-
+async function fetchAndSave(systemType) {
+  const data = await fetchSystem(systemType);
   const snapshot = new Snapshot({
     systemType: data.systemType,
     checkedAt: new Date(),
@@ -264,9 +159,8 @@ async function fetchAndSave(systemType, stateFilter) {
     entries: data.entries,
     meta: data.meta,
   });
-
   await snapshot.save();
   return snapshot;
 }
 
-module.exports = { fetchSystem, fetchAndSave, normalizeState };
+module.exports = { fetchSystem, fetchAndSave };
