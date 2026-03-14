@@ -1,4 +1,4 @@
-export default function HourlyAveragesTable({ averages = [], loading, days, onDaysChange }) {
+export default function HourlyAveragesTable({ averages = [], loading, days, onDaysChange, stateFilter }) {
   if (loading) {
     return (
       <div className="card overflow-hidden">
@@ -29,7 +29,14 @@ export default function HourlyAveragesTable({ averages = [], loading, days, onDa
   return (
     <div className="card overflow-hidden">
       <div className="p-4 border-b border-surface-border flex items-center justify-between flex-wrap gap-3">
-        <h3 className="font-semibold text-white text-sm">Hourly Averages</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-white text-sm">Hourly Averages</h3>
+          {stateFilter && (
+            <span className="text-xs bg-accent-green/15 text-accent-green border border-accent-green/30 px-2 py-0.5 rounded font-display">
+              {stateFilter}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500">Show last:</span>
           {[1, 3, 7].map((d) => (
