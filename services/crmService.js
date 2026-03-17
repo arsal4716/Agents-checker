@@ -138,7 +138,7 @@ async function fetchPublisher() {
   const lmTx = getTxCount(lmData);
   const prosTx = getTxCount(prosData);
 
-  const totalReady  = hcTx.ready  + lmTx.ready  + prosTx.ready;
+  const totalReady = hcTx.ready + lmTx.ready + prosTx.ready;
   const totalActive = hcTx.active + lmTx.active + prosTx.active;
 
   return {
