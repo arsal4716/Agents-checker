@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
-import PublisherPage from "./pages/PublisherPage.jsx";
+import MaintenancePage from "./pages/MaintenancePage.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -31,7 +31,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public routes — no login required */}
-          <Route path="/dashboard/publisher" element={<PublisherPage />} />
+          <Route path="/dashboard/publisher" element={<MaintenancePage />} />
 
           {/* Auth routes */}
           <Route
