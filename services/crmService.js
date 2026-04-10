@@ -28,16 +28,28 @@ async function fetchLM(entry) {
     const res = await axios.get(
       `${LM_BASE}/${entry.phone}?ava=1&ing=SRPI_&sta=true&cnt=true&act=true&rsn=true`
     );
+
     return {
-      state: entry.state, phone: entry.phone,
-      ready: Number(res.data.ready || 0), active: Number(res.data.active || 0),
-      reason: res.data.reason || "", cause: res.data.cause || "", hasError: false,
+      state: entry.state,
+      phone: entry.phone,
+      ready: Number(res.data.ready || 0),
+      active: Number(res.data.active || 0),
+      reason: res.data.reason || "",
+      cause: res.data.cause || "",
+      hasError: false,
     };
   } catch {
-    return { state: entry.state, phone: entry.phone, ready: "ERR", active: "ERR", reason: "ERR", cause: "ERR", hasError: true };
+    return {
+      state: entry.state,
+      phone: entry.phone,
+      ready: "ERR",
+      active: "ERR",
+      reason: "ERR",
+      cause: "ERR",
+      hasError: true,
+    };
   }
 }
-
 async function fetchPros(entry) {
   try {
     const res = await axios.get(
@@ -52,11 +64,6 @@ async function fetchPros(entry) {
     return { state: entry.state, phone: entry.phone, ready: "ERR", active: "ERR", reason: "", cause: "", hasError: true };
   }
 }
-
-// ─── Key insight: use TX entry as the true unique agent count ─────────────────
-// One agent appears in every state queue they're licensed in.
-// Since EVERY agent has TX, the TX queue count = actual unique agent headcount.
-// Summing across states would multiply-count the same agents.
 
 function getTxCount(entries) {
   const tx = entries.find((e) => e.state === "TX" && !e.hasError);
@@ -102,12 +109,20 @@ async function fetchPublisher() {
       return { state: entry.state, ready: Number(res.data.ready || 0), active: Number(res.data.active || 0), hasError: false };
     } catch { return { state: entry.state, ready: 0, active: 0, hasError: true }; }
   });
-
   const lmPromises = lmNumbers.map(async (entry) => {
     try {
-      const res = await axios.get(`${LM_BASE}/${entry.phone}?ava=1&ing=SRI_&sta=true&adg=true&cnt=true&act=true&rsn=true`);
-      return { state: entry.state, ready: Number(res.data.ready || 0), active: Number(res.data.active || 0), hasError: false };
-    } catch { return { state: entry.state, ready: 0, active: 0, hasError: true }; }
+      const res = await axios.get(
+        `${LM_BASE}/${entry.phone}?ava=1&ing=SRPI_&sta=true&cnt=true&act=true&rsn=true`
+      );
+      return {
+        state: entry.state,
+        ready: Number(res.data.ready || 0),
+        active: Number(res.data.active || 0),
+        hasError: false
+      };
+    } catch {
+      return { state: entry.state, ready: 0, active: 0, hasError: true };
+    }
   });
 
   const prosPromises = prosNumbers.map(async (entry) => {
