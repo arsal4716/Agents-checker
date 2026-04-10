@@ -26,7 +26,7 @@ async function fetchHC(entry) {
 async function fetchLM(entry) {
   try {
     const res = await axios.get(
-      `${LM_BASE}/${entry.phone}?ava=1&ing=SRI_&sta=true&adg=true&cnt=true&act=true&rsn=true`
+      `${LM_BASE}/${entry.phone}?ava=1&ing=SRPI_&sta=true&cnt=true&act=true&rsn=true`
     );
     return {
       state: entry.state, phone: entry.phone,
