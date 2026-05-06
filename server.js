@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const statsRoutes = require("./routes/stats");
 const publicPublisherRoutes = require("./routes/publicPublisher");
 const { startCronJob } = require("./jobs/cronJob");
+const bulkRoute = require("./routes/phs2BulkStatus");
 
 const app = express();
 const PORT = process.env.PORT || 6003;
@@ -38,7 +39,7 @@ app.use(session({
 app.use("/api/auth", authRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/public/publisher", publicPublisherRoutes);
-
+app.use("/api/phs2-bulk-status", bulkRoute);
 app.get("/api/health", (req, res) =>
   res.json({ status: "ok", timestamp: new Date() })
 );
