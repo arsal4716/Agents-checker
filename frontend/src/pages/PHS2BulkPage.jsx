@@ -26,10 +26,7 @@ export default function PHS2BulkPage() {
       <div className="max-w-5xl mx-auto space-y-6">
         <h1 className="text-xl font-bold">PHS-2-LM360 Live Status</h1>
 
-        <button
-          onClick={fetchData}
-          className="btn-primary"
-        >
+        <button onClick={fetchData} className="btn-primary">
           Refresh
         </button>
 
@@ -40,6 +37,7 @@ export default function PHS2BulkPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-700">
+                  <th>ID</th>
                   <th className="p-3 text-left">State</th>
                   <th className="p-3 text-left">Phone</th>
                   <th className="p-3 text-left">Code</th>
@@ -50,24 +48,21 @@ export default function PHS2BulkPage() {
               <tbody>
                 {data.map((row, i) => (
                   <tr key={i} className="border-b border-gray-800">
+                    <td className="p-3">{row.id}</td>
                     <td className="p-3">{row.state}</td>
                     <td className="p-3">{row.phone}</td>
 
-                    <td className={`p-3 font-semibold ${
-                      row.code === 1000
-                        ? "text-green-400"
-                        : "text-red-400"
-                    }`}>
+                    <td
+                      className={`p-3 font-semibold ${
+                        row.code === 1000 ? "text-green-400" : "text-red-400"
+                      }`}
+                    >
                       {row.code}
                     </td>
 
-                    <td className="p-3">
-                      {row.bid ? `$${row.bid}` : "-"}
-                    </td>
+                    <td className="p-3">{row.bid ? `$${row.bid}` : "-"}</td>
 
-                    <td className="p-3 text-gray-300">
-                      {row.message}
-                    </td>
+                    <td className="p-3 text-gray-300">{row.message}</td>
                   </tr>
                 ))}
               </tbody>
