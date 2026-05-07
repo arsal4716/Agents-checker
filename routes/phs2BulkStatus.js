@@ -18,7 +18,7 @@ const phs2Numbers = [
   { state: "MI", phone: "13135760000" }, // Michigan
   { state: "MO", phone: "18888430000" }, // Missouri
   { state: "MS", phone: "16623280000" }, // Mississippi
-  { state: "MT", phone: "NO_NUMBER_FOUND" }, // Montana
+  { state: "MT", phone: "14064425825" }, // Montana
   { state: "NC", phone: "18286870000" }, // North Carolina
   { state: "NE", phone: "14026710000" }, // Nebraska
   { state: "OH", phone: "13305740000" }, // Ohio
