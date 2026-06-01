@@ -2,7 +2,10 @@ const axios = require("axios");
 const { hcNumbers, lmNumbers, prosNumbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
 
+// const HC_BASE = "https://hcs.tldcrm.com/api/public/dialer/ready/";
 const HC_BASE = "https://hcs.tldcrm.com/api/public/dialer/ready/";
+const HC_VENDOR_API =
+  "https://mrrjtlkkanbtxmycjrdx.supabase.co/functions/v1/vendor-availability";
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
 // NEW LM360 API
@@ -11,34 +14,87 @@ const LM_BASE =
 
 // ─── HC ─────────────────────────────────────────────────────────────
 
+// async function fetchHC(entry) {
+//   try {
+//     const res = await axios.get(
+//       `${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
+//     );
+
+//     return {
+//       state: entry.state,
+//       phone: entry.phone,
+//       ready: Number(res.data.ready || 0),
+//       active: Number(res.data.active || 0),
+//       reason: res.data.reason || "",
+//       cause: res.data.cause || "",
+//       hasError: false,
+//     };
+//   } catch {
+//     return {
+//       state: entry.state,
+//       phone: entry.phone,
+//       ready: "ERR",
+//       active: "ERR",
+//       reason: "",
+//       cause: "",
+//       hasError: true,
+//     };
+//   }
+// }
 async function fetchHC(entry) {
   try {
-    const res = await axios.get(
-      `${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
-    );
+    // ONLY OH + AZ use Supabase HC API
+    if (["OH", "AZ"].includes(entry.state)) {
+      const res = await axios.get(
+        `${HC_VENDOR_API}?state=${entry.state}`,
+        {
+          headers: {
+            "x-vendor-api-key":
+              "ngis_09a2a17c2454727d6e2c1efe48680869a86872f2f73c3f7a",
+          },
+          timeout: 8000,
+        }
+      );
 
+      const data = res.data;
+
+      return {
+        state: data.state,               // "FL" etc (from API)
+        phone: entry.phone,
+
+        ready: Number(data.ready || 0),
+        active: Number(data.agents?.on_call || 0),
+
+        reason: data.reason || "",
+        cause: data.vendor || "",
+
+        hasError: false,
+      };
+    }
+
+    // OPTIONAL fallback (NOT USED if you removed other states)
     return {
       state: entry.state,
       phone: entry.phone,
-      ready: Number(res.data.ready || 0),
-      active: Number(res.data.active || 0),
-      reason: res.data.reason || "",
-      cause: res.data.cause || "",
-      hasError: false,
+      ready: 0,
+      active: 0,
+      reason: "disabled",
+      cause: "",
+      hasError: true,
     };
-  } catch {
+
+  } catch (err) {
     return {
       state: entry.state,
       phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "",
+      ready: 0,
+      active: 0,
+      reason: "error",
       cause: "",
       hasError: true,
     };
   }
 }
-
 // ─── NEW LM360 ─────────────────────────────────────────────────────
 
 async function fetchLM(entry) {
@@ -110,13 +166,13 @@ function getTxCount(entries) {
 
   return tx
     ? {
-        ready: Number(tx.ready || 0),
-        active: Number(tx.active || 0),
-      }
+      ready: Number(tx.ready || 0),
+      active: Number(tx.active || 0),
+    }
     : {
-        ready: 0,
-        active: 0,
-      };
+      ready: 0,
+      active: 0,
+    };
 }
 
 // ─── MAIN FETCH ────────────────────────────────────────────────────
