@@ -24,12 +24,48 @@ const SYSTEMS = [
 ];
 
 const STATE_OPTIONS = [
-  "TX", "TN", "FL", "MS", "LA", "SC", "OK", "OH",
-  "MO", "AZ", "AL", "IN", "NE", "MI", "NC", "IA",
-  "AR", "CA", "CO", "CT", "DE", "DC", "GA", "ID",
-  "IL", "KS", "KY", "MD", "NV", "NH", "NJ", "NM",
-  "NY", "ND", "OR", "PA", "RI", "SD", "UT", "WV",
-  "WI", "WY",
+  "AZ",
+  "OH",
+  "MO",
+  "IN",
+  "TX",
+  "TN",
+  "FL",
+  "MS",
+  "LA",
+  "SC",
+  "OK",
+  "AL",
+  "NE",
+  "MI",
+  "NC",
+  "IA",
+  "AR",
+  "CA",
+  "CO",
+  "CT",
+  "DE",
+  "DC",
+  "GA",
+  "ID",
+  "IL",
+  "KS",
+  "KY",
+  "MD",
+  "NV",
+  "NH",
+  "NJ",
+  "NM",
+  "NY",
+  "ND",
+  "OR",
+  "PA",
+  "RI",
+  "SD",
+  "UT",
+  "WV",
+  "WI",
+  "WY",
 ];
 
 const AUTO_REFRESH_INTERVAL = 60;
@@ -53,9 +89,7 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
 
-  const [autoRefreshSecs, setAutoRefreshSecs] = useState(
-    AUTO_REFRESH_INTERVAL
-  );
+  const [autoRefreshSecs, setAutoRefreshSecs] = useState(AUTO_REFRESH_INTERVAL);
 
   const [toast, setToast] = useState(null);
 
@@ -131,9 +165,7 @@ export default function DashboardPage() {
     }, AUTO_REFRESH_INTERVAL * 1000);
 
     countdownRef.current = setInterval(() => {
-      setAutoRefreshSecs((s) =>
-        s <= 1 ? AUTO_REFRESH_INTERVAL : s - 1
-      );
+      setAutoRefreshSecs((s) => (s <= 1 ? AUTO_REFRESH_INTERVAL : s - 1));
     }, 1000);
 
     return () => {
@@ -178,13 +210,10 @@ export default function DashboardPage() {
       />
 
       <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-white">
-              Agent Availability
-            </h1>
+            <h1 className="text-xl font-bold text-white">Agent Availability</h1>
 
             <p className="text-sm text-gray-500 mt-0.5">
               Auto-checked every 10 min · Dashboard refreshes every{" "}

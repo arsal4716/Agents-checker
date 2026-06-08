@@ -11,9 +11,11 @@ import RecentChecksTable from "../components/RecentChecksTable.jsx";
 import HourlyAveragesTable from "../components/HourlyAveragesTable.jsx";
 
 const AUTO_REFRESH = 60;
-
-// States that appear in publisher combined data — TX first
 const STATE_OPTIONS = [
+  "AZ",
+  "OH",
+  "MO",
+  "IN",
   "TX",
   "TN",
   "FL",
@@ -21,11 +23,7 @@ const STATE_OPTIONS = [
   "LA",
   "SC",
   "OK",
-  "OH",
-  "MO",
-  "AZ",
   "AL",
-  "IN",
   "NE",
   "MI",
   "NC",
