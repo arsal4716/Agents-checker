@@ -12,9 +12,7 @@ import HourlyAveragesTable from "../components/HourlyAveragesTable.jsx";
 
 const AUTO_REFRESH = 60;
 
-const priorityOrder = ["AZ", "MO", "IN", "OH"];
-const isPriority = priorityOrder.includes(row.state);
-
+// States that appear in publisher combined data — TX first
 const STATE_OPTIONS = [
   "TX",
   "TN",
@@ -61,12 +59,15 @@ const STATE_OPTIONS = [
 ];
 
 function PublisherBreakdownTable({ entries = [], loading }) {
+  const priorityOrder = ["AZ", "MO", "IN", "OH"];
+
   if (loading) {
     return (
       <div className="card overflow-hidden">
         <div className="p-4 border-b border-surface-border">
           <div className="h-5 w-40 bg-surface-border rounded animate-pulse" />
         </div>
+
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
@@ -83,7 +84,8 @@ function PublisherBreakdownTable({ entries = [], loading }) {
       </div>
     );
   }
-  if (!entries.length)
+
+  if (!entries.length) {
     return (
       <div className="card p-8 text-center">
         <p className="text-gray-500 text-sm">
@@ -91,6 +93,7 @@ function PublisherBreakdownTable({ entries = [], loading }) {
         </p>
       </div>
     );
+  }
 
   return (
     <div className="card overflow-hidden">
@@ -102,6 +105,7 @@ function PublisherBreakdownTable({ entries = [], loading }) {
           {entries.length} states
         </span>
       </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -120,37 +124,53 @@ function PublisherBreakdownTable({ entries = [], loading }) {
               </th>
             </tr>
           </thead>
+
           <tbody>
             {entries.map((row, i) => {
               const num = Number(row.active || 0);
+
               const color =
                 num >= 5
                   ? "text-accent-green"
                   : num >= 1
                     ? "text-accent-amber"
                     : "text-gray-500";
+
+              const isPriority = priorityOrder.includes(row.state);
+
               return (
                 <tr
                   key={row.state}
-                  className="border-b border-surface-border/50 hover:bg-surface-hover transition-colors"
+                  className={`border-b border-surface-border/50 hover:bg-surface-hover transition-colors ${
+                    isPriority ? "bg-accent-green/5" : ""
+                  }`}
                 >
                   <td className="px-4 py-3 text-gray-600 font-display text-xs">
                     {i + 1}
                   </td>
-                  <td className="px-4 py-3 font-semibold text-white flex items-center gap-2">
-                    {row.state}
+
+                  <td className="px-4 py-3 font-semibold flex items-center gap-2">
+                    <span
+                      className={
+                        isPriority ? "text-accent-green" : "text-white"
+                      }
+                    >
+                      {row.state}
+                    </span>
 
                     {isPriority && (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/20 text-accent-green">
                         TOP
                       </span>
                     )}
-                  </td>{" "}
+                  </td>
+
                   <td
                     className={`px-4 py-3 text-right font-display font-medium ${color}`}
                   >
                     {row.ready}
                   </td>
+
                   <td
                     className={`px-4 py-3 text-right font-display font-medium ${color}`}
                   >
