@@ -14,8 +14,9 @@ const AUTO_REFRESH = 60;
 const STATE_OPTIONS = [
   "AZ",
   "OH",
-  "MO",
   "IN",
+  "MI",
+  "MO",
   "TX",
   "TN",
   "FL",
@@ -25,7 +26,6 @@ const STATE_OPTIONS = [
   "OK",
   "AL",
   "NE",
-  "MI",
   "NC",
   "IA",
   "AR",
@@ -57,7 +57,7 @@ const STATE_OPTIONS = [
 ];
 
 function PublisherBreakdownTable({ entries = [], loading }) {
-  const priorityOrder = ["AZ", "MO", "IN", "OH"];
+  const priorityOrder = ["AZ", "MI", "IN", "OH"];
 
   if (loading) {
     return (

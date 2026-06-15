@@ -50,7 +50,7 @@ async function fetchHC(entry) {
         {
           headers: {
             "x-vendor-api-key":
-              "ngis_2dd85fcc325003735df00fa243e83f7cea149596d717f0b0",
+              "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2",
           },
           timeout: 8000,
         }

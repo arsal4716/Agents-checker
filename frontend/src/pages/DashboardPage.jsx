@@ -26,8 +26,9 @@ const SYSTEMS = [
 const STATE_OPTIONS = [
   "AZ",
   "OH",
-  "MO",
   "IN",
+  "MI",
+  "MO",
   "TX",
   "TN",
   "FL",
@@ -37,7 +38,6 @@ const STATE_OPTIONS = [
   "OK",
   "AL",
   "NE",
-  "MI",
   "NC",
   "IA",
   "AR",

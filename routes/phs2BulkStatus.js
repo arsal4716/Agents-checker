@@ -8,20 +8,20 @@ const BASE_URL =
 // All required states added
 const phs2Numbers = [
   { state: "AZ", phone: "14808940000" }, // Arizona
+  { state: "OH", phone: "13305740000" }, // Ohio
+  { state: "IN", phone: "13177690000" }, // Indiana
+  { state: "MI", phone: "13135760000" }, // Michigan
   { state: "CO", phone: "17196320000" }, // Colorado
   { state: "FL", phone: "14076540000" }, // Florida
   { state: "IA", phone: "13196620000" }, // Iowa
   { state: "IL", phone: "12172330000" }, // Illinois
-  { state: "IN", phone: "13177690000" }, // Indiana
   { state: "KS", phone: "17854250000" }, // Kansas
   { state: "LA", phone: "13379840000" }, // Louisiana
-  { state: "MI", phone: "13135760000" }, // Michigan
   { state: "MO", phone: "18888430000" }, // Missouri
   { state: "MS", phone: "16623280000" }, // Mississippi
   { state: "MT", phone: "14064425825" }, // Montana
   { state: "NC", phone: "18286870000" }, // North Carolina
   { state: "NE", phone: "14026710000" }, // Nebraska
-  { state: "OH", phone: "13305740000" }, // Ohio
   { state: "OK", phone: "14055240000" }, // Oklahoma
   { state: "SC", phone: "18032540000" }, // South Carolina
   { state: "TN", phone: "16158960000" }, // Tennessee
