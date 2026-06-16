@@ -12,35 +12,6 @@ const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
-// ─── HC ─────────────────────────────────────────────────────────────
-
-// async function fetchHC(entry) {
-//   try {
-//     const res = await axios.get(
-//       `${HC_BASE}${entry.phone}?ava=1&sta=true&adg=true&cnt=true&act=true&rsn=true&ing=SRI_`
-//     );
-
-//     return {
-//       state: entry.state,
-//       phone: entry.phone,
-//       ready: Number(res.data.ready || 0),
-//       active: Number(res.data.active || 0),
-//       reason: res.data.reason || "",
-//       cause: res.data.cause || "",
-//       hasError: false,
-//     };
-//   } catch {
-//     return {
-//       state: entry.state,
-//       phone: entry.phone,
-//       ready: "ERR",
-//       active: "ERR",
-//       reason: "",
-//       cause: "",
-//       hasError: true,
-//     };
-//   }
-// }
 async function fetchHC(entry) {
   try {
     // ONLY OH + AZ use Supabase HC API
