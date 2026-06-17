@@ -5,7 +5,6 @@ const hcNumbers = [
   { state: "AZ", phone: "15204060000" },
   { state: "SC", phone: "18036650000" },
   { state: "TX", phone: "14696610000" },
-  { state: "IN", phone: "15743030000" },
   { state: "AL", phone: "12562950000" },
   { state: "NE", phone: "15312190000" },
   { state: "MS", phone: "16629130000" },
