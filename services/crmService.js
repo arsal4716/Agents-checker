@@ -14,47 +14,41 @@ const LM_BASE =
 
 async function fetchHC(entry) {
   try {
-    // ONLY OH + AZ use Supabase HC API
-    if (["OH", "AZ"].includes(entry.state)) {
-      const res = await axios.get(
-        `${HC_VENDOR_API}?state=${entry.state}`,
-        {
-          headers: {
-            "x-vendor-api-key":
-              "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2",
-          },
-          timeout: 8000,
-        }
-      );
+    const res = await axios.get(
+      `${HC_VENDOR_API}?state=${entry.state}`,
+      {
+        headers: {
+          "x-vendor-api-key":
+            "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2",
+        },
+        timeout: 8000,
+      }
+    );
 
-      const data = res.data;
+    const data = res.data;
 
-      return {
-        state: data.state,               // "FL" etc (from API)
-        phone: entry.phone,
-
-        ready: Number(data.ready || 0),
-        active: Number(data.agents?.on_call || 0),
-
-        reason: data.reason || "",
-        cause: data.vendor || "",
-
-        hasError: false,
-      };
-    }
-
-    // OPTIONAL fallback (NOT USED if you removed other states)
     return {
-      state: entry.state,
+      state: data.state || entry.state,
       phone: entry.phone,
-      ready: 0,
-      active: 0,
-      reason: "disabled",
-      cause: "",
-      hasError: true,
-    };
 
+      // Available now
+      ready: Number(data.state_available_now || data.ready || 0),
+
+      // Licensed agents
+      active: Number(data.state_licensed || 0),
+
+      reason: "",
+      cause: data.vendor || "",
+
+      hasError: false,
+    };
   } catch (err) {
+    console.error(
+      "HC ERROR",
+      entry.state,
+      err.response?.data || err.message
+    );
+
     return {
       state: entry.state,
       phone: entry.phone,
