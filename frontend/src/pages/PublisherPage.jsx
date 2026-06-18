@@ -148,7 +148,7 @@ function PublisherBreakdownTable({ entries = [], loading }) {
                   </td>
 
                   <td className="px-4 py-3 font-semibold flex items-center gap-2">
-                                          {row.state}
+                    {row.state}
 
                     {/* <span
                       className={
