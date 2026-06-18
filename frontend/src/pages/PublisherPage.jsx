@@ -148,19 +148,20 @@ function PublisherBreakdownTable({ entries = [], loading }) {
                   </td>
 
                   <td className="px-4 py-3 font-semibold flex items-center gap-2">
-                    <span
+                                          {row.state}
+
+                    {/* <span
                       className={
                         isPriority ? "text-accent-green" : "text-white"
                       }
                     >
-                      {row.state}
-                    </span>
+                    </span> */}
 
-                    {isPriority && (
+                    {/* {isPriority && (
                       <span className="text-[10px] px-2 py-0.5 rounded bg-accent-green/20 text-accent-green">
                         TOP
                       </span>
-                    )}
+                    )} */}
                   </td>
 
                   <td
