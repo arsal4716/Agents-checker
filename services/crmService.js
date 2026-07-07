@@ -10,8 +10,6 @@ const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
-const HC_VENDOR_API =
-  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
 
 async function fetchHC(entry) {
   try {
