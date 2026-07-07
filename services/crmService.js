@@ -1,9 +1,6 @@
 const axios = require("axios");
 const { hcNumbers, lmNumbers, prosNumbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
-
-const HC_VENDOR_API =
-  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
 // NEW LM360 API
@@ -11,12 +8,21 @@ const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
 
+const HC_VENDOR_API =
+  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
+
+const HC_VENDOR_API_KEY =
+  "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2";
+
 async function fetchHC(entry) {
   try {
     const res = await axios.get(HC_VENDOR_API, {
       params: {
         state: entry.state,
         caller_id: entry.phone,
+      },
+      headers: {
+        "x-vendor-api-key": HC_VENDOR_API_KEY,
       },
       timeout: 8000,
     });
@@ -26,7 +32,6 @@ async function fetchHC(entry) {
     return {
       state: data.state || entry.state,
       phone: entry.phone,
-
       ready: Number(
         data.state_available_now ??
         data.agents?.state_available ??
@@ -38,10 +43,8 @@ async function fetchHC(entry) {
         data.agents?.state_licensed ??
         0
       ),
-
       reason: data.message || "",
       cause: data.vendor || "",
-
       hasError: false,
     };
   } catch (err) {
@@ -55,7 +58,7 @@ async function fetchHC(entry) {
       phone: entry.phone,
       ready: 0,
       active: 0,
-      reason: err.response?.data?.message || err.message || "Unknown error",
+      reason: err.response?.data?.message || err.message,
       cause: "",
       hasError: true,
     };
