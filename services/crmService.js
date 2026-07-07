@@ -2,28 +2,26 @@ const axios = require("axios");
 const { hcNumbers, lmNumbers, prosNumbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
 
-// const HC_BASE = "https://hcs.tldcrm.com/api/public/dialer/ready/";
-const HC_BASE = "https://hcs.tldcrm.com/api/public/dialer/ready/";
 const HC_VENDOR_API =
-  "https://mrrjtlkkanbtxmycjrdx.supabase.co/functions/v1/vendor-availability";
+  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
 // NEW LM360 API
 const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
+const HC_VENDOR_API =
+  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
+
 async function fetchHC(entry) {
   try {
-    const res = await axios.get(
-      `${HC_VENDOR_API}?state=${entry.state}`,
-      {
-        headers: {
-          "x-vendor-api-key":
-            "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2",
-        },
-        timeout: 8000,
-      }
-    );
+    const res = await axios.get(HC_VENDOR_API, {
+      params: {
+        state: entry.state,
+        caller_id: entry.phone,
+      },
+      timeout: 8000,
+    });
 
     const data = res.data;
 
@@ -31,30 +29,35 @@ async function fetchHC(entry) {
       state: data.state || entry.state,
       phone: entry.phone,
 
-      // Available now
-      ready: Number(data.state_available_now || data.ready || 0),
+      ready: Number(
+        data.state_available_now ??
+        data.agents?.state_available ??
+        data.ready ??
+        0
+      ),
+      active: Number(
+        data.state_licensed ??
+        data.agents?.state_licensed ??
+        0
+      ),
 
-      // Licensed agents
-      active: Number(data.state_licensed || 0),
-
-      reason: "",
+      reason: data.message || "",
       cause: data.vendor || "",
 
       hasError: false,
     };
   } catch (err) {
-    console.error(
-      "HC ERROR",
-      entry.state,
-      err.response?.data || err.message
-    );
+    console.error("HC ERROR");
+    console.error("State:", entry.state);
+    console.error("Status:", err.response?.status);
+    console.error("Response:", err.response?.data || err.message);
 
     return {
       state: entry.state,
       phone: entry.phone,
       ready: 0,
       active: 0,
-      reason: "error",
+      reason: err.response?.data?.message || err.message || "Unknown error",
       cause: "",
       hasError: true,
     };
