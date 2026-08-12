@@ -28,19 +28,23 @@ async function fetchHC(entry) {
     });
 
     const data = res.data;
+    const agents = data.agents || {};
 
     return {
       state: data.state || entry.state,
       phone: entry.phone,
+      // agents.available/agents.total are the vendor's live agent-pool counts
+      // (matches the raw vendor-availability response) — prefer these over the
+      // state-scoped licensing fields, which undercount against Postman.
       ready: Number(
+        agents.available ??
         data.state_available_now ??
-        data.agents?.state_available ??
         data.ready ??
         0
       ),
       active: Number(
+        agents.total ??
         data.state_licensed ??
-        data.agents?.state_licensed ??
         0
       ),
       reason: data.message || "",
