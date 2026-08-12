@@ -3,6 +3,19 @@ const router = express.Router();
 const Snapshot = require("../models/Snapshot");
 const { fetchAndSave } = require("../services/crmService");
 const { buildExcel } = require("../utils/excelExport");
+const { hcNumbers, lmNumbers, prosNumbers } = require("../data/phoneNumbers");
+
+// GET /api/public/publisher/states — the set of states actually queried
+// across HC/LM360/Pros, so the frontend filter never drifts from what the
+// backend fetches.
+router.get("/states", (req, res) => {
+  const states = [
+    ...new Set(
+      [...hcNumbers, ...lmNumbers, ...prosNumbers].map((e) => e.state)
+    ),
+  ].sort();
+  return res.json({ data: states });
+});
 
 // GET /api/public/publisher/latest
 router.get("/latest", async (req, res) => {

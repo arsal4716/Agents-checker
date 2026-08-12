@@ -3,6 +3,7 @@ import {
   getPublisherLatest,
   getPublisherRecent,
   getPublisherHourly,
+  getPublisherStates,
   getPublisherDownloadUrl,
   refreshPublisher,
 } from "../api/client.js";
@@ -11,50 +12,6 @@ import RecentChecksTable from "../components/RecentChecksTable.jsx";
 import HourlyAveragesTable from "../components/HourlyAveragesTable.jsx";
 
 const AUTO_REFRESH = 60;
-const STATE_OPTIONS = [
-  "AZ",
-  "OH",
-  "IN",
-  "MI",
-  "MO",
-  "TX",
-  "TN",
-  "FL",
-  "MS",
-  "LA",
-  "SC",
-  "OK",
-  "AL",
-  "NE",
-  "NC",
-  "IA",
-  "AR",
-  "CA",
-  "CO",
-  "CT",
-  "DE",
-  "DC",
-  "GA",
-  "ID",
-  "IL",
-  "KS",
-  "KY",
-  "MD",
-  "NV",
-  "NH",
-  "NJ",
-  "NM",
-  "NY",
-  "ND",
-  "OR",
-  "PA",
-  "RI",
-  "SD",
-  "UT",
-  "WV",
-  "WI",
-  "WY",
-];
 
 function PublisherBreakdownTable({ entries = [], loading }) {
   const priorityOrder = ["AZ", "MI", "IN", "OH"];
@@ -190,6 +147,7 @@ export default function PublisherPage() {
   const [recentChecks, setRecentChecks] = useState([]);
   const [hourlyAverages, setHourlyAverages] = useState([]);
   const [hourlyDays, setHourlyDays] = useState(1);
+  const [stateOptions, setStateOptions] = useState([]);
   const [stateFilter, setStateFilter] = useState("TX"); // default TX per client
   const [loadingSnapshot, setLoadingSnapshot] = useState(true);
   const [loadingRecent, setLoadingRecent] = useState(true);
@@ -235,6 +193,12 @@ export default function PublisherPage() {
     } finally {
       setLoadingHourly(false);
     }
+  }, []);
+
+  useEffect(() => {
+    getPublisherStates()
+      .then((res) => setStateOptions(res.data || []))
+      .catch(() => setStateOptions([]));
   }, []);
 
   useEffect(() => {
@@ -426,7 +390,7 @@ export default function PublisherPage() {
               >
                 All States
               </button>
-              {STATE_OPTIONS.map((s) => (
+              {stateOptions.map((s) => (
                 <button
                   key={s}
                   onClick={() => setStateFilter(s)}

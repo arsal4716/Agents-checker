@@ -44,6 +44,9 @@ export const getPublisherRecent = (limit = 20, state = "") =>
 export const getPublisherHourly = (days = 1, state = "") =>
   api.get("/public/publisher/hourly", { params: { days, ...(state && { state }) } }).then((r) => r.data);
 
+export const getPublisherStates = () =>
+  api.get("/public/publisher/states").then((r) => r.data);
+
 export const getPublisherDownloadUrl = () => `/api/public/publisher/download`;
 
 export default api;
