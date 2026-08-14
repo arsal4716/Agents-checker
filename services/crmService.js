@@ -28,28 +28,36 @@ async function fetchHC(entry) {
     });
 
     const data = res.data;
-    const agents = data.agents || {};
 
     return {
       state: data.state || entry.state,
       phone: entry.phone,
-      // agents.available/agents.total are the vendor's live agent-pool counts
-      // (matches the raw vendor-availability response) — prefer these over the
-      // state-scoped licensing fields, which undercount against Postman.
+      // state_available_now / state_licensed are scoped to the requested
+      // state. agents.available / agents.total are NOT — they're a
+      // company-wide snapshot identical across every state's request, which
+      // is why using them here made every row in the breakdown show the same
+      // Ready/Active numbers.
       ready: Number(
-        agents.available ??
         data.state_available_now ??
+        data.agents?.state_available ??
         data.ready ??
         0
       ),
       active: Number(
-        agents.total ??
         data.state_licensed ??
+        data.agents?.state_licensed ??
         0
       ),
       reason: data.message || "",
       cause: data.vendor || "",
       hasError: false,
+      agents: {
+        total: Number(data.agents?.total ?? 0),
+        available: Number(data.agents?.available ?? 0),
+        on_call: Number(data.agents?.on_call ?? 0),
+        wrap_up: Number(data.agents?.wrap_up ?? 0),
+        paused: Number(data.agents?.paused ?? 0),
+      },
     };
   } catch (err) {
     console.error("HC ERROR");
