@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+// Company-wide agent-pool breakdown from the HC vendor's `agents` object.
+// total/available/on_call/wrap_up/paused are the same across every state in
+// a batch (they're not state-scoped) — kept here per-entry so each row
+// reflects exactly what the vendor returned for that request.
+const agentsBreakdownSchema = new mongoose.Schema(
+  {
+    total: { type: Number, default: 0 },
+    available: { type: Number, default: 0 },
+    on_call: { type: Number, default: 0 },
+    wrap_up: { type: Number, default: 0 },
+    paused: { type: Number, default: 0 },
+  },
+  { _id: false }
+);
+
 const entrySchema = new mongoose.Schema(
   {
     state: { type: String, required: true },
@@ -9,6 +24,7 @@ const entrySchema = new mongoose.Schema(
     reason: { type: String, default: "" },
     cause: { type: String, default: "" },
     hasError: { type: Boolean, default: false },
+    agents: { type: agentsBreakdownSchema, default: () => ({}) },
   },
   { _id: false }
 );

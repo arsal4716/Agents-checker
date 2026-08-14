@@ -34,6 +34,7 @@ export default function BreakdownTable({ entries = [], loading }) {
   }
 
   const showReasonCause = entries.some((e) => e.reason || e.cause);
+  const showAgents = entries.some((e) => e.agents && Object.keys(e.agents).length > 0);
 
   return (
     <div className="card overflow-hidden">
@@ -50,6 +51,15 @@ export default function BreakdownTable({ entries = [], loading }) {
               <th className="text-left px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Phone</th>
               <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Ready</th>
               <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Active</th>
+              {showAgents && (
+                <>
+                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display" title="Company-wide total agents at time of ping">Total</th>
+                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display" title="Company-wide available agents at time of ping">Available</th>
+                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">On Call</th>
+                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Wrap Up</th>
+                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Paused</th>
+                </>
+              )}
               {showReasonCause && (
                 <>
                   <th className="text-left px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Reason</th>
@@ -75,6 +85,15 @@ export default function BreakdownTable({ entries = [], loading }) {
                 <td className="px-4 py-3 text-right">
                   <ReadyBadge value={row.active} />
                 </td>
+                {showAgents && (
+                  <>
+                    <td className="px-4 py-3 text-right font-display text-xs text-white">{row.agents?.total ?? "—"}</td>
+                    <td className="px-4 py-3 text-right font-display text-xs text-white">{row.agents?.available ?? "—"}</td>
+                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.on_call ?? "—"}</td>
+                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.wrap_up ?? "—"}</td>
+                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.paused ?? "—"}</td>
+                  </>
+                )}
                 {showReasonCause && (
                   <>
                     <td className="px-4 py-3 text-gray-400 text-xs max-w-[120px] truncate">{row.reason || "—"}</td>

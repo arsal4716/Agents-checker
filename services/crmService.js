@@ -51,6 +51,13 @@ async function fetchHC(entry) {
       reason: data.message || "",
       cause: data.vendor || "",
       hasError: false,
+      agents: {
+        total: Number(data.agents?.total ?? 0),
+        available: Number(data.agents?.available ?? 0),
+        on_call: Number(data.agents?.on_call ?? 0),
+        wrap_up: Number(data.agents?.wrap_up ?? 0),
+        paused: Number(data.agents?.paused ?? 0),
+      },
     };
   } catch (err) {
     console.error("HC ERROR");
