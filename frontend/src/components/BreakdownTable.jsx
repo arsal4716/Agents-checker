@@ -55,9 +55,6 @@ export default function BreakdownTable({ entries = [], loading }) {
                 <>
                   <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display" title="Company-wide total agents at time of ping">Total</th>
                   <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display" title="Company-wide available agents at time of ping">Available</th>
-                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">On Call</th>
-                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Wrap Up</th>
-                  <th className="text-right px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-display">Paused</th>
                 </>
               )}
               {showReasonCause && (
@@ -89,9 +86,6 @@ export default function BreakdownTable({ entries = [], loading }) {
                   <>
                     <td className="px-4 py-3 text-right font-display text-xs text-white">{row.agents?.total ?? "—"}</td>
                     <td className="px-4 py-3 text-right font-display text-xs text-white">{row.agents?.available ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.on_call ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.wrap_up ?? "—"}</td>
-                    <td className="px-4 py-3 text-right font-display text-xs text-gray-400">{row.agents?.paused ?? "—"}</td>
                   </>
                 )}
                 {showReasonCause && (
