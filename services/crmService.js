@@ -8,22 +8,14 @@ const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
 
-const HC_VENDOR_API =
-  "https://api.nextgeninsurancesolutionsinc.com/vendor-availability";
-
-const HC_VENDOR_API_KEY =
-  "ngis_0b874bd3d895e346772cef2368ec6a3f85384cf6d4ae06b46061f49f164206a2";
+// NEW HC API — same ping-by-phone style as LM360, replaces the old
+// query-string + x-vendor-api-key endpoint.
+const HC_BASE =
+  "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/26637d03-2495-4b48-94ce-9338c514e43c";
 
 async function fetchHC(entry) {
   try {
-    const res = await axios.get(HC_VENDOR_API, {
-      params: {
-        state: entry.state,
-        caller_id: entry.phone,
-      },
-      headers: {
-        "x-vendor-api-key": HC_VENDOR_API_KEY,
-      },
+    const res = await axios.get(`${HC_BASE}/${entry.phone}`, {
       timeout: 8000,
     });
 
