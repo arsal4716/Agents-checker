@@ -29,7 +29,7 @@ const entrySchema = new mongoose.Schema(
 const snapshotSchema = new mongoose.Schema({
   systemType: {
     type: String,
-    enum: ["hc", "lm", "pros", "publisher"],
+    enum: ["hc", "lm", "pros", "phs2new", "publisher"],
     required: true,
     index: true,
   },

@@ -1,11 +1,16 @@
 const axios = require("axios");
-const { hcNumbers, lmNumbers, prosNumbers } = require("../data/phoneNumbers");
+const { hcNumbers, lmNumbers, prosNumbers, phs2Numbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
 // NEW LM360 API
 const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
+
+// PHS-2 — same lm360.tldcrm.com ping-by-phone style as LM360, different
+// vendor id/key.
+const PHS2_BASE =
+  "https://lm360.tldcrm.com/api/vendor/ping/36771/e1da98524b376c045c294e54cdf9cd0a";
 
 
 // NEW HC API — same ping-by-phone style as LM360, replaces the old
@@ -99,6 +104,36 @@ async function fetchLM(entry) {
   }
 }
 
+// ─── PHS-2 ─────────────────────────────────────────────────────────
+
+async function fetchPHS2(entry) {
+  try {
+    const res = await axios.get(`${PHS2_BASE}/${entry.phone}`);
+
+    return {
+      state: entry.state,
+      phone: entry.phone,
+      ready: Number(res.data.ready || 0),
+      active: Number(res.data.active || 0),
+      reason: res.data.reason || "",
+      cause: res.data.cause || "",
+      hasError: false,
+    };
+  } catch (err) {
+    console.log("PHS2 ERROR:", entry.phone, err.message);
+
+    return {
+      state: entry.state,
+      phone: entry.phone,
+      ready: "ERR",
+      active: "ERR",
+      reason: "ERR",
+      cause: "ERR",
+      hasError: true,
+    };
+  }
+}
+
 // ─── PROS ──────────────────────────────────────────────────────────
 
 async function fetchPros(entry) {
@@ -156,6 +191,8 @@ async function fetchSystem(systemType) {
     entries = await Promise.all(lmNumbers.map(fetchLM));
   } else if (systemType === "pros") {
     entries = await Promise.all(prosNumbers.map(fetchPros));
+  } else if (systemType === "phs2new") {
+    entries = await Promise.all(phs2Numbers.map(fetchPHS2));
   } else if (systemType === "publisher") {
     return fetchPublisher();
   }
