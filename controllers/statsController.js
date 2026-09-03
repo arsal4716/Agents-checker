@@ -2,7 +2,7 @@ const Snapshot = require("../models/Snapshot");
 const { fetchAndSave } = require("../services/crmService");
 const { buildExcel } = require("../utils/excelExport");
 
-const VALID_TYPES = ["hc", "lm", "pros", "publisher"];
+const VALID_TYPES = ["hc", "lm", "pros", "phs2new", "publisher"];
 
 // ─── Helper ───────────────────────────────────────────────────────────────────
 /** Format a JS Date as a readable EST string, e.g. "2025-03-17 09:30 EST" */
