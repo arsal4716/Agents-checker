@@ -17,6 +17,7 @@ import {
 
 const SYSTEMS = [
   { value: "hc", label: "Health Connect" },
+  { value: "hcfe", label: "HC-FE" },
   { value: "lm", label: "Lead Market 360" },
   { value: "pros", label: "Pros-LM360" },
   { value: "phs2new", label: "LM-Medicare" },
