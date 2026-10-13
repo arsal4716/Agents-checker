@@ -99,6 +99,11 @@ const phs2Numbers = [
   { state: "TX", phone: "17136810000" },
 ];
 
+// HC-FE — same vendor (nextgeninsurancesolutionsinc.com), different ping
+// id/campaign. Reuses the Health Connect state/phone list since it's the
+// same account's state coverage.
+const hcFeNumbers = hcNumbers;
+
 // Totals phones for publisher combined view
 const publisherTotals = {
   hc: "14696610000",
@@ -111,5 +116,6 @@ module.exports = {
   lmNumbers,
   prosNumbers,
   phs2Numbers,
+  hcFeNumbers,
   publisherTotals,
 };

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { hcNumbers, lmNumbers, prosNumbers, phs2Numbers } = require("../data/phoneNumbers");
+const { hcNumbers, lmNumbers, prosNumbers, phs2Numbers, hcFeNumbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
@@ -17,6 +17,10 @@ const PHS2_BASE =
 // query-string + x-vendor-api-key endpoint.
 const HC_BASE =
   "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/26637d03-2495-4b48-94ce-9338c514e43c";
+
+// HC-FE — same vendor as Health Connect, different ping id/campaign.
+const HCFE_BASE =
+  "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/ba04bc16-0e85-4ad0-b5dc-23cd467b8d6d";
 
 async function fetchHC(entry) {
   try {
@@ -70,6 +74,56 @@ async function fetchHC(entry) {
     };
   }
 }
+// ─── HC-FE ─────────────────────────────────────────────────────────
+
+async function fetchHCFE(entry) {
+  try {
+    const res = await axios.get(`${HCFE_BASE}/${entry.phone}`, {
+      timeout: 8000,
+    });
+
+    const data = res.data;
+
+    return {
+      state: data.state || entry.state,
+      phone: entry.phone,
+      ready: Number(
+        data.state_available_now ??
+        data.agents?.state_available ??
+        data.ready ??
+        0
+      ),
+      active: Number(
+        data.state_licensed ??
+        data.agents?.state_licensed ??
+        0
+      ),
+      reason: data.message || "",
+      cause: data.vendor || "",
+      hasError: false,
+      agents: {
+        total: Number(data.agents?.total ?? 0),
+        available: Number(data.agents?.available ?? 0),
+      },
+    };
+  } catch (err) {
+    console.error("HC-FE ERROR");
+    console.error("State:", entry.state);
+    console.error("Status:", err.response?.status);
+    console.error("Response:", err.response?.data || err.message);
+
+    return {
+      state: entry.state,
+      phone: entry.phone,
+      ready: 0,
+      active: 0,
+      reason: err.response?.data?.message || err.message,
+      cause: "",
+      hasError: true,
+    };
+  }
+}
+
 // ─── NEW LM360 ─────────────────────────────────────────────────────
 
 async function fetchLM(entry) {
@@ -193,6 +247,8 @@ async function fetchSystem(systemType) {
     entries = await Promise.all(prosNumbers.map(fetchPros));
   } else if (systemType === "phs2new") {
     entries = await Promise.all(phs2Numbers.map(fetchPHS2));
+  } else if (systemType === "hcfe") {
+    entries = await Promise.all(hcFeNumbers.map(fetchHCFE));
   } else if (systemType === "publisher") {
     return fetchPublisher();
   }
