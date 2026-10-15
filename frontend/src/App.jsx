@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import PublisherPage from "./pages/PublisherPage.jsx";
 import PHS2BulkPage from "./pages/PHS2BulkPage.jsx";
+import WWAgentAvailabilityPage from "./pages/WWAgentAvailabilityPage.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -34,6 +35,7 @@ export default function App() {
           {/* Public routes — no login required */}
           <Route path="/dashboard/publisher" element={<PublisherPage />} />
           <Route path="/dashboard/temporary" element={<PHS2BulkPage />} />
+          <Route path="/ww-agentavailibity" element={<WWAgentAvailabilityPage />} />
 
           {/* Auth routes */}
           <Route
