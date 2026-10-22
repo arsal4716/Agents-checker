@@ -104,8 +104,10 @@ const phs2Numbers = [
 // number (verified working on this vendor account); the rest are
 // cross-vendor numbers borrowed from Pros/LM360 and NOT yet confirmed to
 // resolve correctly against the HC-FE ping id — verify each via Postman
-// before trusting its data. ME and VA have no tracking number anywhere in
-// this file — add them here once the real DIDs are known.
+// before trusting its data. ME and VA had no tracking number anywhere in
+// this file, so they use their state's real area code with the reserved
+// NANP "555" placeholder exchange (207-555-xxxx / 804-555-xxxx) — replace
+// with the real DID once assigned.
 const hcFeNumbers = [
   { state: "AL", phone: "12562950000" },
   { state: "AZ", phone: "15204060000" },
@@ -128,6 +130,8 @@ const hcFeNumbers = [
   { state: "UT", phone: "18019640000" },
   { state: "WI", phone: "12627860000" },
   { state: "WV", phone: "13042520000" },
+  { state: "ME", phone: "12075550000" },
+  { state: "VA", phone: "18045550000" },
 ];
 
 // Totals phones for publisher combined view
