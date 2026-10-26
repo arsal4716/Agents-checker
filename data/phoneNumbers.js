@@ -12,6 +12,15 @@ const hcNumbers = [
   { state: "TN", phone: "16153880000" },
   { state: "OK", phone: "15806700000" },
   { state: "FL", phone: "13054950000" },
+  // Added to reach the full 19-state coverage. Cross-vendor numbers
+  // borrowed from Pros/LM360/HC-FE — verify via Postman against the HC
+  // ping id before trusting their data, same as IN earlier.
+  { state: "IA", phone: "13196620000" },
+  { state: "KS", phone: "17854250000" },
+  { state: "MI", phone: "13135760000" },
+  { state: "NC", phone: "18286870000" },
+  { state: "WI", phone: "12627860000" },
+  { state: "WY", phone: "13077540000" },
 ];
 
 const lmNumbers = [
