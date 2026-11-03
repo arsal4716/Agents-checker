@@ -149,10 +149,10 @@ async function fetchLM(entry) {
     return {
       state: entry.state,
       phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "ERR",
-      cause: "ERR",
+      ready: 0,
+      active: 0,
+      reason: err.message || "Request failed",
+      cause: "",
       hasError: true,
     };
   }
@@ -179,10 +179,10 @@ async function fetchPHS2(entry) {
     return {
       state: entry.state,
       phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "ERR",
-      cause: "ERR",
+      ready: 0,
+      active: 0,
+      reason: err.message || "Request failed",
+      cause: "",
       hasError: true,
     };
   }
@@ -205,13 +205,13 @@ async function fetchPros(entry) {
       cause: res.data.cause || "",
       hasError: false,
     };
-  } catch {
+  } catch (err) {
     return {
       state: entry.state,
       phone: entry.phone,
-      ready: "ERR",
-      active: "ERR",
-      reason: "",
+      ready: 0,
+      active: 0,
+      reason: err.message || "Request failed",
       cause: "",
       hasError: true,
     };

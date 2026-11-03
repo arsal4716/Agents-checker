@@ -78,8 +78,8 @@ const getRecent = async (req, res) => {
           $project: {
             _id: 1,
             checkedAt: 1,
-            totalReady: { $toDouble: "$entries.ready" },
-            totalActive: { $toDouble: "$entries.active" },
+            totalReady: { $convert: { input: "$entries.ready", to: "double", onError: 0, onNull: 0 } },
+            totalActive: { $convert: { input: "$entries.active", to: "double", onError: 0, onNull: 0 } },
             meta: 1,
           },
         },
@@ -135,11 +135,11 @@ const getHourlyAverages = async (req, res) => {
         {
           $group: {
             _id: dateGroupId,
-            avgReady:   { $avg: { $toDouble: "$entries.ready" } },
-            avgActive:  { $avg: { $toDouble: "$entries.active" } },
+            avgReady:   { $avg: { $convert: { input: "$entries.ready", to: "double", onError: 0, onNull: 0 } } },
+            avgActive:  { $avg: { $convert: { input: "$entries.active", to: "double", onError: 0, onNull: 0 } } },
             checkCount: { $sum: 1 },
-            minReady:   { $min: { $toDouble: "$entries.ready" } },
-            maxReady:   { $max: { $toDouble: "$entries.ready" } },
+            minReady:   { $min: { $convert: { input: "$entries.ready", to: "double", onError: 0, onNull: 0 } } },
+            maxReady:   { $max: { $convert: { input: "$entries.ready", to: "double", onError: 0, onNull: 0 } } },
           },
         },
         { $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1, "_id.hour": -1 } },
