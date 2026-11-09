@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { hcNumbers, lmNumbers, prosNumbers, phs2Numbers, hcFeNumbers } = require("../data/phoneNumbers");
+const { hcNumbers, lmNumbers, prosNumbers, hcBookNumbers } = require("../data/phoneNumbers");
 const Snapshot = require("../models/Snapshot");
 const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 
@@ -7,20 +7,16 @@ const PROS_BASE = "https://pros.tldcrm.com/api/public/dialer/ready";
 const LM_BASE =
   "https://lm360.tldcrm.com/api/vendor/ping/34065/5762d5a82f65730fdcb0200688d17b4b";
 
-// PHS-2 — same lm360.tldcrm.com ping-by-phone style as LM360, different
-// vendor id/key.
-const PHS2_BASE =
-  "https://lm360.tldcrm.com/api/vendor/ping/36771/e1da98524b376c045c294e54cdf9cd0a";
-
-
 // NEW HC API — same ping-by-phone style as LM360, replaces the old
 // query-string + x-vendor-api-key endpoint.
 const HC_BASE =
   "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/26637d03-2495-4b48-94ce-9338c514e43c";
 
-// HC-FE — same vendor as Health Connect, different ping id/campaign.
-const HCFE_BASE =
-  "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/ba04bc16-0e85-4ad0-b5dc-23cd467b8d6d";
+// HC-Book — same vendor as Health Connect, different ping id/campaign.
+// Its tag is InboundNumberNoCountry, so the leading country code "1" is
+// stripped before pinging (see fetchHCBook).
+const HCBOOK_BASE =
+  "https://api.nextgeninsurancesolutionsinc.com/api/vendor/ping/c4660f88-6967-496a-b93c-8052cdedd481";
 
 async function fetchHC(entry) {
   try {
@@ -74,11 +70,13 @@ async function fetchHC(entry) {
     };
   }
 }
-// ─── HC-FE ─────────────────────────────────────────────────────────
+// ─── HC-Book ───────────────────────────────────────────────────────
 
-async function fetchHCFE(entry) {
+async function fetchHCBook(entry) {
   try {
-    const res = await axios.get(`${HCFE_BASE}/${entry.phone}`, {
+    const noCountryPhone = entry.phone.replace(/^1(\d{10})$/, "$1");
+
+    const res = await axios.get(`${HCBOOK_BASE}/${noCountryPhone}`, {
       timeout: 8000,
     });
 
@@ -107,7 +105,7 @@ async function fetchHCFE(entry) {
       },
     };
   } catch (err) {
-    console.error("HC-FE ERROR");
+    console.error("HC-Book ERROR");
     console.error("State:", entry.state);
     console.error("Status:", err.response?.status);
     console.error("Response:", err.response?.data || err.message);
@@ -145,36 +143,6 @@ async function fetchLM(entry) {
     };
   } catch (err) {
     console.log("LM ERROR:", entry.phone, err.message);
-
-    return {
-      state: entry.state,
-      phone: entry.phone,
-      ready: 0,
-      active: 0,
-      reason: err.message || "Request failed",
-      cause: "",
-      hasError: true,
-    };
-  }
-}
-
-// ─── PHS-2 ─────────────────────────────────────────────────────────
-
-async function fetchPHS2(entry) {
-  try {
-    const res = await axios.get(`${PHS2_BASE}/${entry.phone}`);
-
-    return {
-      state: entry.state,
-      phone: entry.phone,
-      ready: Number(res.data.ready || 0),
-      active: Number(res.data.active || 0),
-      reason: res.data.reason || "",
-      cause: res.data.cause || "",
-      hasError: false,
-    };
-  } catch (err) {
-    console.log("PHS2 ERROR:", entry.phone, err.message);
 
     return {
       state: entry.state,
@@ -243,12 +211,8 @@ async function fetchSystem(systemType) {
     entries = await Promise.all(hcNumbers.map(fetchHC));
   } else if (systemType === "lm") {
     entries = await Promise.all(lmNumbers.map(fetchLM));
-  } else if (systemType === "pros") {
-    entries = await Promise.all(prosNumbers.map(fetchPros));
-  } else if (systemType === "phs2new") {
-    entries = await Promise.all(phs2Numbers.map(fetchPHS2));
-  } else if (systemType === "hcfe") {
-    entries = await Promise.all(hcFeNumbers.map(fetchHCFE));
+  } else if (systemType === "hcbook") {
+    entries = await Promise.all(hcBookNumbers.map(fetchHCBook));
   } else if (systemType === "publisher") {
     return fetchPublisher();
   }
