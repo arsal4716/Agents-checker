@@ -341,7 +341,7 @@ export default function PublisherPage() {
             Publisher Combined View
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            HC · LM360 · Pros — aggregated by state · auto-updated every 10 min
+            Combined agent availability — aggregated by state · auto-updated every 10 min
             {checkedAt && (
               <span className="ml-2 text-gray-600">
                 · Last check: {checkedAt}
