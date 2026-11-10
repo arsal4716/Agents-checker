@@ -2,6 +2,7 @@ const SYSTEM_LABELS = {
   hc: "Health Connect",
   hcbook: "HC-Book",
   lm: "Lead Market 360",
+  phs2new: "LM-Medicare",
   publisher: "Publisher Combined",
 };
 

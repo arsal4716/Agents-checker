@@ -19,6 +19,7 @@ const SYSTEMS = [
   { value: "hc", label: "Health Connect" },
   { value: "hcbook", label: "HC-Book" },
   { value: "lm", label: "Lead Market 360" },
+  { value: "phs2new", label: "LM-Medicare" },
   { value: "phs2", label: "PHS-2 (Temporary)" },
   { value: "publisher", label: "Publisher Combined" },
 ];
