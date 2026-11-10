@@ -83,6 +83,31 @@ const prosNumbers = [
   { state: "WY", phone: "13077540000" },
 ];
 
+// LM-Medicare (originally named PHS-2) tag routing states (see Tag Routing
+// Rules screenshot). MT and VA have no existing tracking number anywhere
+// in this file — add them here once the real DIDs are known.
+const phs2Numbers = [
+  { state: "AL", phone: "13342790000" },
+  { state: "AZ", phone: "14808940000" },
+  { state: "FL", phone: "14076540000" },
+  { state: "GA", phone: "17702220000" },
+  { state: "IL", phone: "12172330000" },
+  { state: "IN", phone: "13177690000" },
+  { state: "IA", phone: "13196620000" },
+  { state: "KS", phone: "17854250000" },
+  { state: "LA", phone: "13379840000" },
+  { state: "MI", phone: "13135760000" },
+  { state: "MO", phone: "18888430000" },
+  { state: "NE", phone: "14026710000" },
+  { state: "NV", phone: "17026480000" },
+  { state: "NC", phone: "18286870000" },
+  { state: "OH", phone: "13305740000" },
+  { state: "OK", phone: "14055240000" },
+  { state: "SC", phone: "18032540000" },
+  { state: "TN", phone: "16158960000" },
+  { state: "TX", phone: "17136810000" },
+];
+
 // HC-Book — same vendor (nextgeninsurancesolutionsinc.com), different ping
 // id/campaign. 16 of 19 states reuse numbers already proven to work on
 // this vendor account; AR, DE, and UT borrow cross-vendor numbers from
@@ -121,6 +146,7 @@ module.exports = {
   hcNumbers,
   lmNumbers,
   prosNumbers,
+  phs2Numbers,
   hcBookNumbers,
   publisherTotals,
 };

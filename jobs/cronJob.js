@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const { fetchAndSave } = require("../services/crmService");
 
-const SYSTEMS = ["hc", "lm", "hcbook", "publisher"];
+const SYSTEMS = ["hc", "lm", "phs2new", "hcbook", "publisher"];
 
 function startCronJob() {
   // Run every 10 minutes: 0,10,20,30,40,50 of every hour
